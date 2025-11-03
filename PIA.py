@@ -106,7 +106,7 @@ def registrar_sala():
         nombre= input("Ingrese el nombre de la sala: ").strip()
         if nombre:
             break
-        print("Error: El nombre de la sala no peude estar vacío.")
+        print("Error: El nombre de la sala no puede estar vacío.")
 
     while True:
         try:
@@ -382,19 +382,26 @@ def editar_evento():
             if not registros_en_rango:
                 print("No hay reservaciones en ese rango de fechas.")
                 return
-            
+            print("\n" + "="*115)
+            print(f"{'FOLIO':<8} {'CLIENTE':<25} {'SALA':<20} {'FECHA':<12} {'TURNO':<12} {'EVENTO':<25}")
+            print("="*115)
+
             for folio, id_cliente, id_sala, fecha_dt, turno, evento in registros_en_rango:
                 mi_cursor.execute("SELECT nombre, apellidos FROM clientes WHERE id_cliente = ?", (id_cliente,))
                 cliente = mi_cursor.fetchone()
                 mi_cursor.execute("SELECT nombre FROM salas WHERE id_sala = ?", (id_sala,))
                 sala = mi_cursor.fetchone()
-                print(f"Folio: {folio} | Cliente: {cliente[0]} {cliente[1]} | Sala: {sala[0]} | Fecha: {fecha_dt.strftime('%m-%d-%Y')} | Turno: {turno} | Evento: {evento}")
+                
+                cliente_nombre = f"{cliente[1]} {cliente[0]}"
+                print(f"{folio:<8} {cliente_nombre:<25} {sala[0]:<20} {fecha_dt.strftime('%m-%d-%Y'):<12} {turno:<12} {evento:<25}")
+
+            print("="*115)
 
 
             folios_validos = {str(r[0]) for r in registros_en_rango}
 
             while True:
-                folio_editar = input("Ingrese el folio de la reservacion que desea editar (o 'cancelar'): ").strip()
+                folio_editar = input("\nIngrese el folio de la reservacion que desea editar (o 'cancelar'): ").strip()
                 if folio_editar.lower() == "cancelar":
                     print("Operación cancelada.")
                     return
